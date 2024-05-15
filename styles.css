@@ -31,8 +31,6 @@ body {
     line-height: 1.5; 
     /* height: calc(100% - 104px); */
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch; 
-    z-index: -2;
 }
 
 .container li {
