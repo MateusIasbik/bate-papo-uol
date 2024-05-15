@@ -1,0 +1,178 @@
+body {
+    background-color: #F3F3F3;
+}
+
+.top {
+    background-color: #FFFFFF;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 6px rgb(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.top img {
+    height: 53px;
+    margin-left: 22px;
+}
+
+.top ion-icon {
+    font-size: 45px;
+    margin-right: 21px;
+}
+
+.container {
+    margin: 104px 0;
+    font-family: "Roboto", sans-serif;
+    line-height: 1.5; 
+}
+
+.container li {
+    background-color: #FFFFFF;
+    min-height: 40px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin: 2px 0;
+}
+
+.container p {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.container li span {
+    font-weight: 400;
+    color: #AAA;
+}
+
+.container li em {
+    font-weight: 700;
+    color: #000;
+}
+
+.enterLeaveChat {
+    background-color: #DCDCDC;
+}
+
+.privateChat {
+    background-color: #FFDEDE;
+}
+
+.bottom {
+    background-color: #FFFFFF;
+    min-height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 6px rgb(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+.sendMessage {
+    margin: 0 17px;
+    width: 100%;
+}
+
+.sendMessage .textChat {
+    color: #000;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+::placeholder {
+    color: #000;
+    font-style: italic;
+}
+
+.sendMessage p {
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 300;
+}
+
+.bottom ion-icon {
+    margin-right: 18px;
+    font-size: 26px;
+}
+
+.boxMenu {
+    display: none;
+    font-family: "Roboto", sans-serif;
+    background-color: rgb(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.menuRight {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    height: 100%;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 17px;
+    z-index: 2;
+}
+
+.menuRight h2 {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+    margin: 8px 0 20px 0;
+}
+
+.menuRight ul {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.leftVisibility, .leftContacts {
+    display: flex;
+    align-items: center;
+}
+
+.menuRight ul li {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 14px 0;
+    align-items: center;
+}
+
+.menuRight ul li ion-icon {
+    font-size: 25px;
+    padding-right: 7px;
+}
+
+.iconCheckMenu ion-icon {
+    display: none;
+    height: 16px;
+    width: 20px;
+}
+
+.checked ion-icon {
+    display: flex;
+    color: #28BB25;
+}
