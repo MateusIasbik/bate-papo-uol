@@ -1,4 +1,5 @@
 let messages = [];
+let userName;
 
 function scrollToBottom() {
     let container = document.querySelector(".container");
@@ -16,8 +17,7 @@ function showMessages() {
                 <p class="enterLeaveChat"><span>(${message.time}) </span> <em>${message.from}</em> ${message.text}</p>
             </li>
         `;
-    }
-    
+    }    
     scrollToBottom();
 }
 
@@ -27,7 +27,17 @@ function responseData(serverData) {
     showMessages();
 }
 
-setInterval(getMessages, 5000); 
+setInterval(statusOk, 5000);
+
+function statusOk() {
+    console.log("O usuário continua on");
+}
+
+function statusUser() {
+    const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/status/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154", {name: userName});
+    promise.then(statusOk);
+    promise.catch(showError);
+}
 
 function getMessages() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154");

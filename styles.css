@@ -26,7 +26,7 @@ body {
 }
 
 .container {
-    margin: 104px 0;
+    padding: 104px 0;
     font-family: "Roboto", sans-serif;
     line-height: 1.5; 
     height: calc(100vh - 104px);
