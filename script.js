@@ -3,7 +3,7 @@ let userName;
 
 function scrollToBottom() {
     let container = document.querySelector(".container");
-    container.scrollTop = container.scrollHeight;
+    container.scrollTop = container.scrollHeight - window.innerHeight;
 }
 
 function showMessages() {
