@@ -5,7 +5,6 @@ function scrollToBottom() {
     container.scrollTop = container.scrollHeight;
 }
 
-
 function showMessages() {
     let messageList = document.querySelector(".container ul");
     messageList.innerHTML = "";
@@ -18,6 +17,7 @@ function showMessages() {
             </li>
         `;
     }
+    
     scrollToBottom();
 }
 
@@ -26,6 +26,8 @@ function responseData(serverData) {
     messages = serverData.data;
     showMessages();
 }
+
+setInterval(getMessages, 5000); 
 
 function getMessages() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154");
@@ -38,6 +40,7 @@ function showError() {
 }
 
 function receiveResponse(response) {
+    // console.log(response);
     // Parseia os dados JSON na configuração da requisição
     const configData = JSON.parse(response.config.data);
     // Acessa o campo 'name' no objeto parseado
@@ -55,3 +58,5 @@ function askName(){
 
 getMessages();
 askName();
+
+

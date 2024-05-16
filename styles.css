@@ -29,8 +29,12 @@ body {
     margin: 104px 0;
     font-family: "Roboto", sans-serif;
     line-height: 1.5; 
-    /* height: calc(100% - 104px); */
+    height: calc(100vh - 104px);
     overflow-y: scroll;
+}
+
+.container ul {
+    height: 100%;
 }
 
 .container li {
