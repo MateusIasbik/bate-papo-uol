@@ -1,23 +1,24 @@
 let messages = [];
 let userName;
 const link = "https://mock-api.driven.com.br/api/v6/uol/";
-// let nameSelected;
+let selectedElement = null;
+let nameSelected = null;
 
 let typedMessage = {
-	from: "",
-	to: "Todos",
-	text: "",
-	type: "message" // ou "private_message"
+    from: "",
+    to: "Todos",
+    text: "",
+    type: "message" // ou "private_message"
 };
 
 function showMessages() {
     let messageList = document.querySelector(".container ul");
     messageList.innerHTML = "";
-    
-    for(let i = 0; i < messages.length; i++) {
+
+    for (let i = 0; i < messages.length; i++) {
         let message = messages[i];
         // console.log(messages[i]);
-        if (message.type === 'status'){
+        if (message.type === 'status') {
             messageList.innerHTML += `
             <li class="messageItem">
                 <p class="enterLeaveChat"><span>(${message.time}) </span> <em>${message.from}</em> ${message.text}</p>
@@ -50,7 +51,7 @@ function statusOk() {
 }
 
 function statusUser() {
-    const promise = axios.post(`${link}status/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, {name: userName});
+    const promise = axios.post(`${link}status/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, { name: userName });
     promise.then(statusOk);
     promise.catch(showError);
 }
@@ -83,10 +84,10 @@ function receiveResponseName(response) {
 }
 
 function namesSent(names) {
-    let userExists = false; 
+    let userExists = false;
     // console.log(names);
 
-    for (let i = 0; i < names.data.length; i++){
+    for (let i = 0; i < names.data.length; i++) {
         if (userName === names.data[i].name) {
             userExists = true;
             break;
@@ -95,9 +96,9 @@ function namesSent(names) {
         alert(`${userName} já existe! Adicione outro nome.`);
         askName();
     } else {
-        const promise = axios.post(`${link}participants/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, {name: userName});
+        const promise = axios.post(`${link}participants/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, { name: userName });
         promise.then(receiveResponseName);
-        promise.catch(showError);   
+        promise.catch(showError);
     }
 }
 
@@ -107,28 +108,28 @@ function checkName() {
     promise.catch(showError);
 }
 
-function askName(){
+function askName() {
     getParticipants();
     userName = prompt("Digite seu nome:");
     typedMessage.from = userName;
-    checkName();     
+    checkName();
 }
 
 function exitTheDisplay() {
     // console.log("Funciona!")
     let element = document.querySelector(".boxMenu");
-    if (element.style.display !== "none"){
+    if (element.style.display !== "none") {
         element.style.display = "none";
     } else {
         element.style.display = "flex";
     }
 }
 
-function clickPeople(){
+function clickPeople() {
     getParticipants();
     // console.log("Deu certo!");
     let element = document.querySelector(".boxMenu");
-    if (element.style.display !== "flex"){
+    if (element.style.display !== "flex") {
         element.style.display = "flex";
     } else {
         element.style.display = "none";
@@ -176,7 +177,28 @@ document.getElementById("myInput").addEventListener("keyup", events => {
     }
 });
 
-function nameClicked(nameSelected) {
+// Adiciona o evento de clique a cada item 'li' dentro do '.visibility ul'
+document.querySelectorAll(".visibility ul li").forEach(item => {
+    item.addEventListener("click", selectElement);
+});
+
+function selectElement(event) {
+    // Seleciona todos os elementos com a classe 'iconCheckMenu checked' e a remove
+    const allElements = document.querySelectorAll(".visibility .iconCheckMenu.checked");
+    allElements.forEach(item => {
+        item.classList.remove("checked");
+    });
+
+    // Adiciona a classe 'checked' ao 'iconCheckMenu' dentro do 'li' clicado
+    const clickedElement = event.currentTarget;
+    const iconCheckMenu = clickedElement.querySelector(".iconCheckMenu");
+    if (iconCheckMenu) {
+        iconCheckMenu.classList.add("checked");
+    }
+}
+
+
+function nameClicked(li, nameWasSelected) {
     const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
 
     // Remove a classe "checked" de todos os elementos que a possuem
@@ -185,39 +207,58 @@ function nameClicked(nameSelected) {
     });
 
     // Adiciona a classe "checked" apenas ao elemento clicado
-    nameSelected.querySelector(".iconCheckMenu").classList.add("checked");
+    li.querySelector(".iconCheckMenu").classList.add("checked");
+
+    nameSelected = nameWasSelected;
+    // console.log(nameWasSelected);
 }
 
 function showNames(names) {
-    console.log(names);
+    // console.log(names);
     const positionNames = document.querySelector(".contacts .contactMessage");
-    positionNames.innerHTML = `
+
+    // Verifica se "Todos" está selecionado e define o template adequadamente
+    let allTemplate = `
     <li onclick="nameClicked(this, 'Todos')">
         <div class="leftContacts">
             <ion-icon name="people"></ion-icon>
             <p>Todos</p>
         </div>
-        <div class="iconCheckMenu"><ion-icon name="checkmark-sharp"></ion-icon></div>
+        <div class="iconCheckMenu ${nameSelected === 'Todos' ? 'checked' : ''}"><ion-icon name="checkmark-sharp"></ion-icon></div>
     </li>
     `;
+    positionNames.innerHTML = allTemplate;
 
     for (let i = 0; i < names.length; i++) {
-        let template = `
-        <li onclick="nameClicked(this, '${names[i]}')">
-            <div class="leftContacts">
-                <ion-icon name="person-circle"></ion-icon>
-                <p>${names[i]}</p>
-            </div>
-            <div class="iconCheckMenu"><ion-icon name="checkmark-sharp"></ion-icon></div>
-        </li>
-        `;
-
-        if (names[i] !== userName) { 
-            positionNames.innerHTML += template;
+        let template;
+        if (names[i] === nameSelected) {
+            template = `
+            <li onclick="nameClicked(this, '${nameSelected}')">
+                <div class="leftContacts">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>${nameSelected}</p>
+                </div>
+                <div class="iconCheckMenu checked"><ion-icon name="checkmark-sharp"></ion-icon></div>
+            </li>
+            `;
+        } else {
+            template = `
+            <li onclick="nameClicked(this, '${names[i]}')">
+                <div class="leftContacts">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>${names[i]}</p>
+                </div>
+                <div class="iconCheckMenu"><ion-icon name="checkmark-sharp"></ion-icon></div>
+            </li>
+            `;
         }
 
+        if (names[i] !== userName) {
+            positionNames.innerHTML += template;
+        }
     }
 }
+
 
 function gettingParticipants(response) {
     // console.log(response.data);
