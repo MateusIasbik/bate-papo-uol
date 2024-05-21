@@ -1,6 +1,7 @@
 let messages = [];
 let userName;
 const link = "https://mock-api.driven.com.br/api/v6/uol/";
+// let nameSelected;
 
 let typedMessage = {
 	from: "",
@@ -44,8 +45,6 @@ function responseData(serverData) {
     showMessages();
 }
 
-// setInterval(statusUser, 5000);
-
 function statusOk() {
     // console.log("O usuário continua on");
 }
@@ -66,8 +65,10 @@ function showError(erro) {
 
     if (erro.response && erro.response.status === 400) {
         alert("Verifique se você preencheu corretamente o nome do usuário!");
+        reloadPage();
     } else {
         alert("Ocorreu um erro. Tente novamente mais tarde.");
+        reloadPage();
     }
 }
 
@@ -107,6 +108,7 @@ function checkName() {
 }
 
 function askName(){
+    getParticipants();
     userName = prompt("Digite seu nome:");
     typedMessage.from = userName;
     checkName();     
@@ -123,6 +125,7 @@ function exitTheDisplay() {
 }
 
 function clickPeople(){
+    getParticipants();
     // console.log("Deu certo!");
     let element = document.querySelector(".boxMenu");
     if (element.style.display !== "flex"){
@@ -145,7 +148,7 @@ function sendMessage() {
         // console.log(typedMessage.text);
         axios.post(`${link}messages/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, typedMessage)
             .then(messageWasSent)
-            .catch(showError);
+            .catch(reloadPage);
         input.value = ""; // Limpar o input após enviar a mensagem
     } else {
         alert("Digite uma mensagem antes de enviar!");
@@ -173,8 +176,68 @@ document.getElementById("myInput").addEventListener("keyup", events => {
     }
 });
 
+function nameClicked(nameSelected) {
+    const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
+
+    // Remove a classe "checked" de todos os elementos que a possuem
+    allNames.forEach(item => {
+        item.classList.remove("checked");
+    });
+
+    // Adiciona a classe "checked" apenas ao elemento clicado
+    nameSelected.querySelector(".iconCheckMenu").classList.add("checked");
+}
+
+function showNames(names) {
+    const positionNames = document.querySelector(".contacts .contactMessage");
+    positionNames.innerHTML = `
+    <li onclick="nameClicked(this, 'Todos')">
+        <div class="leftContacts">
+            <ion-icon name="people"></ion-icon>
+            <p>Todos</p>
+        </div>
+        <div class="iconCheckMenu"><ion-icon name="checkmark-sharp"></ion-icon></div>
+    </li>
+    `;
+
+    for (let i = 0; i < names.length; i++) {
+        let template = `
+        <li onclick="nameClicked(this, '${names[i]}')">
+            <div class="leftContacts">
+                <ion-icon name="person-circle"></ion-icon>
+                <p>${names[i]}</p>
+            </div>
+            <div class="iconCheckMenu"><ion-icon name="checkmark-sharp"></ion-icon></div>
+        </li>
+        `;
+
+        positionNames.innerHTML += template;
+    }
+}
+
+function gettingParticipants(response) {
+    if (response.data.length > 0) {
+        const namesIncluded = response.data;
+        const names = namesIncluded.map(person => person.name);
+        showNames(names);
+    } else {
+        alert("Não há ninguém na sala!");
+    }
+}
+
+function getParticipants() {
+    axios.get(`${link}participants/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`)
+        .then(gettingParticipants)
+        .catch(reloadPage);
+}
+
+function reloadPage() {
+    window.location.reload();
+}
+
 getMessages();
 askName();
 setInterval(getMessages, 3000);
 setInterval(statusUser, 5000);
+setInterval(getParticipants, 10000);
 
