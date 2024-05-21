@@ -189,6 +189,7 @@ function nameClicked(nameSelected) {
 }
 
 function showNames(names) {
+    console.log(names);
     const positionNames = document.querySelector(".contacts .contactMessage");
     positionNames.innerHTML = `
     <li onclick="nameClicked(this, 'Todos')">
@@ -211,11 +212,15 @@ function showNames(names) {
         </li>
         `;
 
-        positionNames.innerHTML += template;
+        if (names[i] !== userName) { 
+            positionNames.innerHTML += template;
+        }
+
     }
 }
 
 function gettingParticipants(response) {
+    // console.log(response.data);
     if (response.data.length > 0) {
         const namesIncluded = response.data;
         const names = namesIncluded.map(person => person.name);
