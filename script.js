@@ -3,6 +3,7 @@ let userName;
 const link = "https://mock-api.driven.com.br/api/v6/uol/";
 let selectedElement = null;
 let nameSelected = null;
+let visibility = null;
 
 let typedMessage = {
     from: "",
@@ -191,12 +192,22 @@ function selectElement(event) {
 
     // Adiciona a classe 'checked' ao 'iconCheckMenu' dentro do 'li' clicado
     const clickedElement = event.currentTarget;
+    const visibilityElement = clickedElement.querySelector(".leftVisibility p");
     const iconCheckMenu = clickedElement.querySelector(".iconCheckMenu");
+    
     if (iconCheckMenu) {
         iconCheckMenu.classList.add("checked");
+
+        // Se visibilityElement e nameSelected estiverem definidos
+        if (visibilityElement && nameSelected) {
+            const visibilityText = visibilityElement.textContent;
+
+            document.querySelector(".sendMessage p").innerHTML = `
+                <p>Enviando para ${nameSelected} (${visibilityText})</p>
+            `;
+        }
     }
 }
-
 
 function nameClicked(li, nameWasSelected) {
     const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
