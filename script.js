@@ -198,8 +198,20 @@ function selectElement(event) {
     if (iconCheckMenu) {
         iconCheckMenu.classList.add("checked");
 
-        // Se visibilityElement e nameSelected estiverem definidos
-        if (visibilityElement && nameSelected) {
+        if (nameSelected === "Todos") {
+            // Remove a classe 'checked' da segunda li
+            const secondLiIconCheckMenu = document.querySelector(".visibility li:nth-child(2) .iconCheckMenu");
+            const firstLiIconCheckMenu = document.querySelector(".visibility li:nth-child(1) .iconCheckMenu");
+
+            if (secondLiIconCheckMenu) {
+                secondLiIconCheckMenu.classList.remove("checked");
+                firstLiIconCheckMenu.classList.add("checked");
+            }
+
+            document.querySelector(".sendMessage p").innerHTML = `
+                <p>Enviando para ${nameSelected} (Público)</p>
+            `;
+        } else if (visibilityElement) {
             const visibilityText = visibilityElement.textContent;
 
             document.querySelector(".sendMessage p").innerHTML = `
@@ -208,6 +220,7 @@ function selectElement(event) {
         }
     }
 }
+
 
 function nameClicked(li, nameWasSelected) {
     const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
