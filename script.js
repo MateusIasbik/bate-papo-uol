@@ -4,7 +4,7 @@ const link = "https://mock-api.driven.com.br/api/v6/uol/";
 let selectedElement = null;
 let visibility = null;
 let eventClicked;
-let visibilityText = "(Público)"
+let visibilityText = "Público"
 
 let typedMessage = {
     from: "",
@@ -264,7 +264,14 @@ function nameClicked(li, nameWasSelected) {
         document.querySelector(".sendMessage p").innerHTML = `
             <p>Enviando para ${nameWasSelected} (${visibilityText})</p>
         `;
+        
+        const secondLiIconCheckMenu = document.querySelector(".visibility li:nth-child(2) .iconCheckMenu");
+        const firstLiIconCheckMenu = document.querySelector(".visibility li:nth-child(1) .iconCheckMenu");
 
+        if (secondLiIconCheckMenu) {
+            secondLiIconCheckMenu.classList.remove("checked");
+            firstLiIconCheckMenu.classList.add("checked");
+        }
     }
 }
 
