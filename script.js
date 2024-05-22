@@ -48,8 +48,13 @@ function showMessages() {
 }
 
 function responseData(serverData) {
-    // console.log(serverData);
-    messages = serverData.data;
+    const filterMessages = serverData.data.filter(message => {
+        if (message.to === userName || message.to === "Todos" || message.type === "status" || message.from === userName) {
+            return message;
+        }
+    })
+    messages = filterMessages;
+    
     showMessages();
 }
 
@@ -212,8 +217,6 @@ function selectElement(event) {
                     <p>Enviando para ${typedMessage.to} (${visibilityText})</p>
                 `;
             } else if (typedMessage.to !== "Todos" && visibilityElement.innerHTML === "Reservadamente") {
-                console.log(visibilityElement.innerHTML)
-                console.log(typedMessage.to)
                 const visibilityText = visibilityElement.textContent;
                 typedMessage.type = "private_message";
                 typedMessage.to= `${typedMessage.to}`;
@@ -222,8 +225,6 @@ function selectElement(event) {
                     <p>Enviando para ${typedMessage.to} (${visibilityText})</p>
                 `;
             } else if (typedMessage.to !== "Todos" && visibilityElement.innerHTML === "Público") {
-                console.log(visibilityElement.innerHTML)
-                console.log(typedMessage.to)
                 const visibilityText = visibilityElement.textContent;
                 typedMessage.type = "message";
                 typedMessage.to= `${typedMessage.to}`;
@@ -233,8 +234,6 @@ function selectElement(event) {
                 `;
             } else {
                 typedMessage.type = "message";
-                console.log(visibilityElement.innerHTML)
-                console.log(typedMessage.to)
                 const secondLiIconCheckMenu = document.querySelector(".visibility li:nth-child(2) .iconCheckMenu");
                 const firstLiIconCheckMenu = document.querySelector(".visibility li:nth-child(1) .iconCheckMenu");
 
