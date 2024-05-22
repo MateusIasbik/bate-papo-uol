@@ -2,8 +2,8 @@ let messages = [];
 let userName;
 const link = "https://mock-api.driven.com.br/api/v6/uol/";
 let selectedElement = null;
-let nameSelected = null;
 let visibility = null;
+let eventClicked;
 
 let typedMessage = {
     from: "",
@@ -31,7 +31,13 @@ function showMessages() {
                 <p><span>(${message.time}) </span> <em>${message.from}</em> para <em>${message.to}</em>: ${message.text}</p>
             </li>
         `;
-        }
+        } else if (message.type === "private_message") {
+            messageList.innerHTML += `
+            <li class="messageItem">
+                <p class="privateChat"><span>(${message.time}) </span> <em>${message.from}</em> para <em>${message.to}</em>: ${message.text}</p>
+            </li>
+        `;
+        } 
     }
 
     let lastMessageItem = document.querySelector(".messageItem:last-child");
@@ -195,32 +201,55 @@ function selectElement(event) {
     const visibilityElement = clickedElement.querySelector(".leftVisibility p");
     const iconCheckMenu = clickedElement.querySelector(".iconCheckMenu");
     
-    if (iconCheckMenu) {
+   
         iconCheckMenu.classList.add("checked");
+            if (typedMessage.to === "Todos" && visibilityElement.innerHTML === "Público" ) {
+                const visibilityText = visibilityElement.textContent;
+                typedMessage.type = "message";
+                typedMessage.to= "Todos";
+                
+                document.querySelector(".sendMessage p").innerHTML = `
+                    <p>Enviando para ${typedMessage.to} (${visibilityText})</p>
+                `;
+            } else if (typedMessage.to !== "Todos" && visibilityElement.innerHTML === "Reservadamente") {
+                console.log(visibilityElement.innerHTML)
+                console.log(typedMessage.to)
+                const visibilityText = visibilityElement.textContent;
+                typedMessage.type = "private_message";
+                typedMessage.to= `${typedMessage.to}`;
 
-        if (nameSelected === "Todos") {
-            // Remove a classe 'checked' da segunda li
-            const secondLiIconCheckMenu = document.querySelector(".visibility li:nth-child(2) .iconCheckMenu");
-            const firstLiIconCheckMenu = document.querySelector(".visibility li:nth-child(1) .iconCheckMenu");
+                document.querySelector(".sendMessage p").innerHTML = `
+                    <p>Enviando para ${typedMessage.to} (${visibilityText})</p>
+                `;
+            } else if (typedMessage.to !== "Todos" && visibilityElement.innerHTML === "Público") {
+                console.log(visibilityElement.innerHTML)
+                console.log(typedMessage.to)
+                const visibilityText = visibilityElement.textContent;
+                typedMessage.type = "message";
+                typedMessage.to= `${typedMessage.to}`;
 
-            if (secondLiIconCheckMenu) {
-                secondLiIconCheckMenu.classList.remove("checked");
-                firstLiIconCheckMenu.classList.add("checked");
-            }
+                document.querySelector(".sendMessage p").innerHTML = `
+                    <p>Enviando para ${typedMessage.to} (${visibilityText})</p>
+                `;
+            } else {
+                typedMessage.type = "message";
+                console.log(visibilityElement.innerHTML)
+                console.log(typedMessage.to)
+                const secondLiIconCheckMenu = document.querySelector(".visibility li:nth-child(2) .iconCheckMenu");
+                const firstLiIconCheckMenu = document.querySelector(".visibility li:nth-child(1) .iconCheckMenu");
 
-            document.querySelector(".sendMessage p").innerHTML = `
-                <p>Enviando para ${nameSelected} (Público)</p>
-            `;
-        } else if (visibilityElement) {
-            const visibilityText = visibilityElement.textContent;
+                if (secondLiIconCheckMenu) {
+                    secondLiIconCheckMenu.classList.remove("checked");
+                    firstLiIconCheckMenu.classList.add("checked");
+                }
 
-            document.querySelector(".sendMessage p").innerHTML = `
-                <p>Enviando para ${nameSelected} (${visibilityText})</p>
-            `;
+                document.querySelector(".sendMessage p").innerHTML = `
+                    <p>Enviando para ${typedMessage.to} (Público)</p>
+                `;
+                alert("Não é possível enviar mensagem reservada para Todos");
         }
-    }
+    
 }
-
 
 function nameClicked(li, nameWasSelected) {
     const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
@@ -232,9 +261,12 @@ function nameClicked(li, nameWasSelected) {
 
     // Adiciona a classe "checked" apenas ao elemento clicado
     li.querySelector(".iconCheckMenu").classList.add("checked");
+    // selectElement();
 
-    nameSelected = nameWasSelected;
+    typedMessage.to = nameWasSelected;
     // console.log(nameWasSelected);
+
+    if(typedMessage.to === "Todos") typedMessage.type = "message"
 }
 
 function showNames(names) {
@@ -248,19 +280,19 @@ function showNames(names) {
             <ion-icon name="people"></ion-icon>
             <p>Todos</p>
         </div>
-        <div class="iconCheckMenu ${nameSelected === 'Todos' ? 'checked' : ''}"><ion-icon name="checkmark-sharp"></ion-icon></div>
+        <div class="iconCheckMenu ${typedMessage.to === 'Todos' ? 'checked' : ''}"><ion-icon name="checkmark-sharp"></ion-icon></div>
     </li>
     `;
     positionNames.innerHTML = allTemplate;
 
     for (let i = 0; i < names.length; i++) {
         let template;
-        if (names[i] === nameSelected) {
+        if (names[i] === typedMessage.to) {
             template = `
-            <li onclick="nameClicked(this, '${nameSelected}')">
+            <li onclick="nameClicked(this, '${typedMessage.to}')">
                 <div class="leftContacts">
                     <ion-icon name="person-circle"></ion-icon>
-                    <p>${nameSelected}</p>
+                    <p>${typedMessage.to}</p>
                 </div>
                 <div class="iconCheckMenu checked"><ion-icon name="checkmark-sharp"></ion-icon></div>
             </li>
@@ -282,7 +314,6 @@ function showNames(names) {
         }
     }
 }
-
 
 function gettingParticipants(response) {
     // console.log(response.data);
