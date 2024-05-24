@@ -10,13 +10,16 @@ let typedMessage = {
     from: "",
     to: "Todos",
     text: "",
-    type: "message" 
+    type: "message" // ou "private_message"
 };
 
 function showMessages() {
     let messageList = document.querySelector(".container ul");
     messageList.innerHTML = "";
 
+    
+    // for (let i = 0; i < messages.length; i++) {
+    //     let message = messages[i];
     messages.forEach(message => {
         if (message.type === 'status') {
             messageList.innerHTML += `
@@ -40,21 +43,27 @@ function showMessages() {
     });
 
     let lastMessageItem = document.querySelector(".messageItem:last-child");
+    // console.log(lastMessageItem);
     if (lastMessageItem) {
         lastMessageItem.scrollIntoView();
     }
+
+    // }
 }
 
 function responseData(serverData) {
+    // removi a const messagesFilter e joguei messages direto como constante
     messages = serverData.data.filter(message => {
         if (message.to === userName || message.to === "Todos" || message.type === "message" || message.from === userName) {
             return message;
         }
     })
+    // messages = filterMessages;
     showMessages();
 }
 
 function statusOk() {
+    // console.log("O usuário continua on");
 }
 
 function statusUser() {
@@ -81,7 +90,9 @@ function showError(erro) {
 }
 
 function receiveResponseName(response) {
+    // Parseia os dados JSON na configuração da requisição
     const configData = JSON.parse(response.config.data);
+    // Acessa o campo 'name' no objeto parseado
     const name = configData.name;
     alert(`${name} foi adicionado com sucesso.`);
     getMessages();
@@ -113,10 +124,10 @@ function checkName() {
 }
 
 function askName() {
-    getParticipants();
     userName = prompt("Digite seu nome:");
     typedMessage.from = userName;
     checkName();
+    getParticipants();
 }
 
 function exitTheDisplay() {
@@ -128,6 +139,7 @@ function exitTheDisplay() {
 
 function clickPeople() {
     getParticipants();
+    // console.log("Deu certo!");
     let element = document.querySelector(".boxMenu");
     if (element.style.display !== "flex") {
         element.style.display = "flex";
@@ -146,19 +158,21 @@ function sendMessage() {
         axios.post(`${link}messages/9b93bd8b-fdc8-47f6-ab3c-dc122a80b154`, typedMessage)
             .then(messageWasSent)
             .catch(reloadPage);
-        input.value = ""; 
+        input.value = ""; // Limpar o input após enviar a mensagem
     } else {
         alert("Digite uma mensagem antes de enviar!");
     }
 }
 
 function selectElement(event) {
+    // Seleciona todos os elementos com a classe 'iconCheckMenu checked' e a remove
     const allElements = document.querySelectorAll(".visibility .iconCheckMenu.checked");
     allElements.forEach(item => {
         item.classList.remove("checked");
     });
 
-    const clickedElement = event.currentTarget; 
+    // Adiciona a classe 'checked' ao 'iconCheckMenu' dentro do 'li' clicado
+    const clickedElement = event.currentTarget; //currentTarget consegue pegar a li diretamente, e não o código extenso
     const visibilityElement = clickedElement.querySelector(".leftVisibility p");
     const iconCheckMenu = clickedElement.querySelector(".iconCheckMenu");
 
@@ -206,19 +220,24 @@ function selectElement(event) {
 }
 
 function nameClicked(li, nameWasSelected) {
+    // console.log(nameWasSelected);
     const allNames = document.querySelectorAll(".contactMessage .iconCheckMenu.checked");
 
+    // Remove a classe "checked" de todos os elementos que a possuem
     allNames.forEach(item => {
         item.classList.remove("checked");
     });
 
+    // Adiciona a classe "checked" apenas ao elemento clicado
     li.querySelector(".iconCheckMenu").classList.add("checked");
+    // selectElement();
 
     document.querySelector(".sendMessage p").innerHTML = `
             <p>Enviando para ${nameWasSelected} (${visibilityText})</p>
         `;
 
     typedMessage.to = nameWasSelected;
+    // console.log(nameWasSelected);
 
     if (typedMessage.to === "Todos") {
         typedMessage.type = "message";
@@ -238,9 +257,11 @@ function nameClicked(li, nameWasSelected) {
     }
 }
 
+// VOLTAR NESTA FUNÇÃO
 function showNames(names) {
     const positionNames = document.querySelector(".contacts .contactMessage");
 
+    // Verifica se "Todos" está selecionado e definir o template adequado
     let allTemplate = `
     <li onclick="nameClicked(this, 'Todos')">
         <div class="leftContacts">
@@ -253,6 +274,8 @@ function showNames(names) {
     positionNames.innerHTML = allTemplate;
 
     names.forEach(nameUsed => {
+        // for (let i = 0; i < names.length; i++) {
+        //     let template;
         if (nameUsed === typedMessage.to) {
             template = `
                 <li onclick="nameClicked(this, '${typedMessage.to}')">
@@ -282,6 +305,7 @@ function showNames(names) {
 }
 
 function gettingParticipants(response) {
+    // console.log(response.data);
     if (response.data.length > 0) {
         const namesIncluded = response.data;
         const names = namesIncluded.map(person => person.name);
@@ -301,28 +325,34 @@ function reloadPage() {
     window.location.reload();
 }
 
+// Adiciona o evento de clique a cada item 'li' dentro do '.visibility ul', ou seja, na escolha de visibilidade
 document.querySelectorAll(".visibility ul li").forEach(item => {
     item.addEventListener("click", selectElement);
 });
 
+//evento que bloqueia a captura do clique no menu da direita dentro do display, impedindo o clique para saída do display
 document.querySelector(".menuRight").addEventListener("click", (event) => {
     event.stopPropagation();
 });
 
+//evento para funcionar o clique de saída do display
 document.querySelector(".boxMenu").addEventListener("click", exitTheDisplay);
 
+//evento para funcionar o clique no ícone para abrir o display
 document.getElementById("iconPeople").addEventListener("click", clickPeople);
 
+// evento para funcionar o envio da mensagem pelo ícone do avião de papel
 document.getElementById("submitButton").addEventListener("click", sendMessage);
 
+//evento para funcionar o envio da mensagem pela tecla enter
 document.getElementById("myInput").addEventListener("keyup", events => {
     if (events.key === "Enter") {
         sendMessage();
     }
 });
 
-getMessages();
 askName();
+// getMessages();
 setInterval(getMessages, 3000);
 setInterval(statusUser, 5000);
 setInterval(getParticipants, 10000);
